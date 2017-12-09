@@ -1,0 +1,1 @@
+# send-masternode-init.d
