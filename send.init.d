@@ -19,8 +19,7 @@ NODENAME=TestNewMn1
 NAME=send.$NODENAME
 DAEMON=/usr/sbin/sendd
 CLIENT=/usr/sbin/send-cli
-DAEMON_ARGS="-datadir=/etc/send/$NODENAME"
-PIDFILE=/var/run/$NAME.pid
+DAEMON_ARGS="-datadir=/etc/send/$NODENAME"PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 CONFFOLDER=/etc/send/$NODENAME
 SENDCONF=$CONFFOLDER/send.conf
@@ -50,7 +49,7 @@ do_start()
 		read passphrase
 		
 		#check if this is the first time running, which means the wallet will be fresh and unencrypted
-		if [ -f "$WALLETFILE" ] ; then
+		if [ -f "$WALLETFILE" ]; then
     		firstrun=0
 		else
 			firstrun=1
