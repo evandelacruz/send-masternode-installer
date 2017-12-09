@@ -257,8 +257,20 @@ case "$1" in
 		echo "Stop the masternode:"
         echo "sudo service send.$NAME stop" >&2
         echo " " >&2
+		echo "Get masternode status and info:"
+        echo "sudo service send.$NAME status" >&2
+        echo " " >&2
 		echo "Get information about the wallet:"
         echo "sudo service send.$NAME walletinfo" >&2
+        echo " " >&2
+		echo "List wallet ids:"
+        echo "sudo service send.$NAME addressinfo" >&2
+        echo " " >&2
+		echo "Get information about the blockchain:"
+        echo "sudo service send.$NAME chaininfo" >&2
+        echo " " >&2
+		echo "Get information about the network:"
+        echo "sudo service send.$NAME networkinfo" >&2
         echo " " >&2
 		echo "Get a new wallet address:"
         echo "sudo service send.$NAME newaddress" >&2
