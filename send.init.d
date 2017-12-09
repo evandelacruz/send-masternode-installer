@@ -1,6 +1,6 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          send.TestNewMn1
+# Provides:          send.nodenameplaceholder
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
@@ -15,11 +15,12 @@
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="SEND masternode service"
-NODENAME=TestNewMn1
+NODENAME=nodenameplaceholder
 NAME=send.$NODENAME
 DAEMON=/usr/sbin/sendd
 CLIENT=/usr/sbin/send-cli
-DAEMON_ARGS="-datadir=/etc/send/$NODENAME"PIDFILE=/var/run/$NAME.pid
+DAEMON_ARGS="-datadir=/etc/send/$NODENAME"
+PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 CONFFOLDER=/etc/send/$NODENAME
 SENDCONF=$CONFFOLDER/send.conf
@@ -49,7 +50,7 @@ do_start()
 		read passphrase
 		
 		#check if this is the first time running, which means the wallet will be fresh and unencrypted
-		if [ -f "$WALLETFILE" ]; then
+		if [ -f "$WALLETFILE" ] ; then
     		firstrun=0
 		else
 			firstrun=1
@@ -73,7 +74,7 @@ do_start()
 		$CLIENT -conf="$SENDCONF" addnode 45.76.116.122:50050 add
 		$CLIENT -conf="$SENDCONF" addnode 69.64.67.226:50050 add
 		
-		if $firstrun == 1;then
+		if $firstrun == 1; then
 			$CLIENT -conf="$SENDCONF" backupwallet "$CONFFOLDER/newwallet-noencryption.dat.bak"			
 			$CLIENT -conf="$SENDCONF" encryptwallet "$passphrase"
 		fi
