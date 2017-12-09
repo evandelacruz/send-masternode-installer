@@ -17,7 +17,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="SEND masternode service"
 NODENAME=testmn1
 NAME=send.$NODENAME
-DAEMON=/usr/sbin/send
+DAEMON=/usr/sbin/sendd
 DAEMON_ARGS="-data-dir=/etc/send/$NODENAME"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
