@@ -1,6 +1,6 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          send.testmn1
+# Provides:          send.TestNewMn1
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
@@ -15,12 +15,16 @@
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="SEND masternode service"
-NODENAME=testmn1
+NODENAME=TestNewMn1
 NAME=send.$NODENAME
 DAEMON=/usr/sbin/sendd
+CLIENT=/usr/sbin/send-cli
 DAEMON_ARGS="-datadir=/etc/send/$NODENAME"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
+CONFFOLDER=/etc/send/$NODENAME
+SENDCONF=$CONFFOLDER/send.conf
+WALLETFILE=$CONFFOLDER/wallet.dat
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
@@ -41,6 +45,17 @@ SCRIPTNAME=/etc/init.d/$NAME
 #
 do_start()
 {
+		echo Please enter your wallet passphrase to start the masternode...
+		echo "(new installations need to enter a new passphrase)"
+		read passphrase
+		
+		#check if this is the first time running, which means the wallet will be fresh and unencrypted
+		if [ -f "$WALLETFILE" ] ; then
+    		firstrun=0
+		else
+			firstrun=1
+  		fi		
+		
         # Return
         #   0 if daemon has been started
         #   1 if daemon was already running
@@ -50,9 +65,22 @@ do_start()
         start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- \
                 $DAEMON_ARGS \
                 || return 2
+				
         # Add code here, if necessary, that waits for the process to be ready
         # to handle requests from services started subsequently which depend
         # on this one.  As a last resort, sleep for some time.
+		$CLIENT -conf="$SENDCONF" addnode 69.64.67.58:50050 add
+		$CLIENT -conf="$SENDCONF" addnode 142.44.246.3:50050 add
+		$CLIENT -conf="$SENDCONF" addnode 45.76.116.122:50050 add
+		$CLIENT -conf="$SENDCONF" addnode 69.64.67.226:50050 add
+		
+		if $firstrun == 1;then
+			$CLIENT -conf="$SENDCONF" backupwallet "$CONFFOLDER/newwallet-noencryption.dat.bak"			
+			$CLIENT -conf="$SENDCONF" encryptwallet "$passphrase"
+		fi
+		
+		#wallet needs tobe unlocked for masternode
+		$CLIENT -conf="$SENDCONF" walletpassphrase 999999999 "$passphrase"
 }
 
 #
@@ -94,6 +122,47 @@ do_reload() {
         return 0
 }
 
+#
+# Function to check the wallet
+#
+do_checkwallet() {
+	$CLIENT -conf="$SENDCONF" getwalletinfo
+}
+
+#
+# Function to check the wallet
+#
+do_showaddresses() {
+	$CLIENT -conf="$SENDCONF" listaddressgroupings
+}
+
+#
+# Function to check the masternode
+#
+do_checkmasternode() {
+	$CLIENT -conf="$SENDCONF" masternodedebug
+}
+
+do_checknetwork() {
+	$CLIENT -conf="$SENDCONF" getnetworkinfo
+	$CLIENT -conf="$SENDCONF" getpeerinfo
+	$CLIENT -conf="$SENDCONF" getnettotals
+}
+
+do_checkblockchain() {
+	echo "Current synced block is "
+	$CLIENT -conf="$SENDCONF" getblockcount
+	$CLIENT -conf="$SENDCONF" getblockchaininfo
+}
+
+do_backupwallet() {
+	$CLIENT -conf="$SENDCONF" backupwallet $2
+}
+
+do_newaddress() {
+	$CLIENT -conf="$SENDCONF" getnewaddress $2
+}
+
 case "$1" in
   start)
         [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
@@ -111,8 +180,39 @@ case "$1" in
                 2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
         esac
         ;;
+  walletinfo)
+		do_checkwallet
+		do_showaddresses
+		exit 0
+		;;
+  networkinfo)
+		do_checknetwork
+		exit 0
+		;;
+  chaininfo)
+		do_checkblockchain
+		exit 0
+		;;
+  addressinfo)
+		do_showaddresses
+		exit 0
+		;;
+  backupwallet)
+		do_backupwallet
+		exit 0
+		;;
+  newaddress)
+		do_newaddress
+		exit 0
+		;;
   status)
-        status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+		if status_of_proc "$DAEMON" "$NAME";
+		then
+		   do_checkmasternode
+		   exit 0
+		else
+		    exit $?
+		fi
         ;;
   #reload|force-reload)
         #
@@ -146,8 +246,26 @@ case "$1" in
         esac
         ;;
   *)
-        #echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
-        echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+		#if they didnt pass any command then output some help
+        echo "Usage: send.$NAME {start|stop|status|walletinfo|networkinfo|chaininfo|addressinfo|backupwallet|newaddress|restart|force-reload} [arguments]" >&2
+        echo " " >&2
+        echo "Examples:" >&2
+        echo " " >&2
+		echo "Start the masternode:"
+        echo "sudo service send.$NAME start" >&2
+        echo " " >&2
+		echo "Stop the masternode:"
+        echo "sudo service send.$NAME stop" >&2
+        echo " " >&2
+		echo "Get information about the wallet:"
+        echo "sudo service send.$NAME walletinfo" >&2
+        echo " " >&2
+		echo "Get a new wallet address:"
+        echo "sudo service send.$NAME newaddress" >&2
+        echo " " >&2
+		echo "Back up the wallet file:"
+        echo "sudo service send.$NAME backupwallet ~/mywalletbackup.dat" >&2
+        echo " " >&2
         exit 3
         ;;
 esac
