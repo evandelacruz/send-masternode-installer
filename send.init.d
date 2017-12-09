@@ -18,7 +18,7 @@ DESC="SEND masternode service"
 NODENAME=testmn1
 NAME=send.$NODENAME
 DAEMON=/usr/sbin/sendd
-DAEMON_ARGS="-datadir=\"/etc/send/$NODENAME\""
+DAEMON_ARGS="-datadir=/etc/send/$NODENAME"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
