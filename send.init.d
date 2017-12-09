@@ -20,7 +20,7 @@ NAME=send.$NODENAME
 DAEMON=/usr/sbin/$NAME
 DAEMON_ARGS="--data-dir=/etc/send/$NODENAME"
 PIDFILE=/var/run/$NAME.pid
-SCRIPTNAME=/etc/init.d/send.$NODENAME
+SCRIPTNAME=/etc/init.d/$NAME
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
