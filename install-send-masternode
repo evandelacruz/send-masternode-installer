@@ -1,0 +1,17 @@
+#!/bin/bash
+trustystring="trusty"
+xenialstring="xenial"
+thisrelease=$(lsb_release -a)
+if test "${thisrelease#*$trustystring}" != "$thisrelease"; then
+
+	echo "Downloading Trusty installer..."
+	wget --no-cache https://raw.githubusercontent.com/nodedaddy/send-masternode-installer/master/send-masternode-install-1.0.0.5-Ubuntu14
+	chmod +x send-masternode-install-1.0.0.5-Ubuntu14
+	echo "Running the installer..."
+  echo " "
+	./send-masternode-install-1.0.0.5-Ubuntu14
+elif test "${thisrelease#*$xenialstring}" != "$thisrelease"; then
+	echo "Sorry, the installer currently only supports Ubuntu 14. We are working on a version for Ubuntu Xenial."
+else
+	echo "Sorry, the installer currently only supports Ubuntu 14."
+fi
