@@ -69,12 +69,7 @@ do_start()
 			
 	# Add code here, if necessary, that waits for the process to be ready
 	# to handle requests from services started subsequently which depend
-	# on this one.  As a last resort, sleep for some time.
-	$CLIENT -conf="$SENDCONF" addnode 69.64.67.58:50050 add
-	$CLIENT -conf="$SENDCONF" addnode 142.44.246.3:50050 add
-	$CLIENT -conf="$SENDCONF" addnode 45.76.116.122:50050 add
-	$CLIENT -conf="$SENDCONF" addnode 69.64.67.226:50050 add
-	
+	# on this one.  As a last resort, sleep for some time.	
 	echo -n "waiting a while to verify the wallet and load the index before continuing..."		
 	getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
 	waitstatus1="Verifying wallet"
@@ -108,6 +103,12 @@ do_start()
 	
 	#wallet needs tobe unlocked for masternode
 	$CLIENT -conf="$SENDCONF" walletpassphrase "$encryptpassphrase" 999999999
+	
+	echo "adding default nodes..."
+	$CLIENT -conf="$SENDCONF" addnode 69.64.67.58:50050 add 2>&1
+	$CLIENT -conf="$SENDCONF" addnode 142.44.246.3:50050 add 2>&1
+	$CLIENT -conf="$SENDCONF" addnode 45.76.116.122:50050 add 2>&1
+	$CLIENT -conf="$SENDCONF" addnode 69.64.67.226:50050 add 2>&1	
 }
 
 #
