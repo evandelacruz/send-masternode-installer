@@ -1,0 +1,242 @@
+#!/bin/bash
+echo
+echo SocialSend 1.0.0.5 Master Node Installer 0.0.1
+echo This will install the SocialSend wallet and configure it to run as a masternode.
+echo
+
+echo "Be sure this is the setup you want before you continue:"
+echo "- Masternode running on this Linux computer (Needs to be online to keep the masternode active)"
+echo "- Send wallet running on a seperate Windows computer (Does not need to stay online after activating the masternode. This is where your rewards will be sent.)"
+echo
+echo "Press any key if you are sure this is the setup you want..."
+echo "(You can exit this installer at any time by pressing ctrl+c)"
+echo
+read confirmkey
+
+echo "What is the name of this masternode (no spaces or special characters) [default: mn1]?"
+read nodename
+if [ -z "$nodename" ]
+then
+nodename="mn1"
+echo "Masternode name will be \"mn1\""
+fi
+echo
+
+echo "Before you continue, you need to do a few things on your Windows wallet."
+echo "Follow these steps:"
+echo -e "1) Open the SocialSend wallet on your Windows computer"
+echo
+echo -e "2) In the wallet interface, go to \"Tools > Debug console\""
+echo
+echo -e "3) In the debug console, run the following command and remember the \e[1mwallet id\e[0m it shows you:" 
+echo -e "   \e[3mgetnewaddress \"$nodename\"\e[0m"
+echo
+echo -e "4) In the debug console, run the following command and remember the \e[1mtransaction id and numeric index\e[0m it shows you:"
+echo -e "   \e[3msendfrom \"ACCOUNT_YOU_HAVE_UNLOCKED_COINS_AVAILABLE\" \"ADDRESS_YOU_GOT_ON_PREVIOUS_LINE\"\e[0m"
+echo
+echo -e "5) In the debug console, run the following command and remember the \e[1mprivate key\e[0m it shows you:" 
+echo -e "   \e[3mcreatemasternodekey\e[0m"
+echo
+echo -e "6) Close the debug console"
+echo
+echo "Once you have completed those steps, you can press any key to continue..."
+read confirmkey
+
+
+echo "What is the masternode private key from step 5 above?"
+read privkey
+echo
+
+echo "ALERT: The next two questions are for advanced users only."
+echo "If you are not sure, press [enter] to accept the default value."
+echo
+
+echo "What port do you want to use for the rpc server (note: this is NOT the same as the masternode port) [default: 50051]?"
+read rpcport
+if [ -z "$rpcport" ]
+then
+rpcport=50051
+echo "RPC server will listen on port $rpcport"
+fi
+echo
+
+echo "Looking for network interfaces..."
+regexiface="^[0-9]: ([a-z0-9\-\_]+):.*$"
+regexaddy="^inet ([a-z0-9\.\:\-]+)[\s|\/]"
+ip a|while read line
+   do
+      if [[ $line =~ $regexiface ]]
+      then
+        ifname="${BASH_REMATCH[1]}"
+        echo $ifname:
+      fi
+   done
+
+echo
+echo "Which network interface do you want to use [default: eth0]"?
+read ifname
+if [ -z "$ifname" ]
+then
+ifname="eth0"
+echo "Will use interface eth0"
+fi
+
+foundiface="false"
+while read line
+   do
+      if [[ $line =~ $regexiface && ${BASH_REMATCH[1]} == "$ifname" ]]
+      then
+       foundiface="true"
+      fi
+
+      if [[ $line =~ $regexaddy && $foundiface == 'true' ]]
+      then
+        ipaddy="${BASH_REMATCH[1]}"		
+		echo Found local ip address: $ipaddy
+      fi
+   done <<< "$(ip a)"
+   
+echo Getting public ip address...
+externalip=$(curl --interface $ifname -s ipinfo.io/ip)
+
+echo Using local ip address: $ipaddy
+echo Using public ip address: $externalip
+echo 
+
+if "$externalip" != "$ipaddy"; then
+   echo "ALERT: The network interface is behind a router and/or you are using network address translation"
+   echo "This is not an error."
+   echo "But it will require an extra step to setup your masternode using this interface."
+   echo "On your router, you will need to forward all traffic from external ($externalip) port 50050 to internal ($ipaddy) port 50050."
+   echo "This is done differently on every router, but usually involves going to http://192.168.1.1 in your web browser and editing the section called \"port forwarding\" (sometimes found under \"advanced\" or \"gaming\")."
+   echo
+   echo "Press any key to continue"
+   input confirminput
+fi
+
+echo "Ready to install dependency packages (7zip, libboost, bitcoin ppa, libdb4.8, libminiupnpc)"
+echo "Press any key to continue..."
+read continueinput
+
+#update packages
+
+echo Installing bitcoin PPA...
+sudo add-apt-repository -y ppa:bitcoin/bitcoin
+
+echo Updating packages...
+sudo apt-get -q update
+
+echo Installing 7zip...
+sudo apt-get -yq install p7zip-full
+
+echo Installing libboost...
+sudo apt-get -yq install libboost-all-dev
+
+
+echo Installing libdb4.8...
+sudo apt-get -yq install libdb4.8-dev libdb4.8++-dev
+
+echo Installing libminiupnpc...
+sudo apt-get -yq install libminiupnpc-dev
+
+echo
+echo Finished installing dependencies.
+echo
+echo Ready to install SEND. Press any key to continue...
+read continueinput
+
+currentUser=$USER
+echo Creating binary folder /opt/send...
+sudo mkdir -p /opt/send
+sudo chown $currentUser:root /opt/send
+
+echo Creating config folder /etc/send/$nodename
+sudo mkdir -p /etc/send/$nodename
+sudo chown $currentUser:root /etc/send/$nodename
+
+#create configs
+echo Creating configs in /etc/send/$nodename
+rm /etc/send/$nodename/send.conf
+echo rpcuser=$nodename-user>>/etc/send/$nodename/send.conf
+echo rpcpassword=$(uuidgen)>>/etc/send/$nodename/send.conf
+echo daemon=1>>/etc/send/$nodename/send.conf
+echo logtimestamps=1>>/etc/send/$nodename/send.conf
+echo masternode=1>>/etc/send/$nodename/send.conf
+echo externalip=$externalip>>/etc/send/$nodename/send.conf
+echo masternodeaddr=$ipaddy>>/etc/send/$nodename/send.conf
+echo bind=$ipaddy>>/etc/send/$nodename/send.conf
+echo rpcport=$rpcport
+echo masternodeprivkey=$privkey>>/etc/send/$nodename/send.conf
+
+#stop daemon if already running
+if [ -f "/etc/init.d/send.$nodename" ]; then
+	echo "Stopping existing service instance if it exists..."
+	sudo service send.$nodename stop > /dev/null 2>&1
+elif [ -f /opt/send/send-cli ]; then
+	echo "Stopping existing daemon instance if it exists..."
+	/opt/send/send-cli -conf="/etc/send/$nodename/send.conf" stop > /dev/null 2>&1
+fi
+
+cd /opt/send
+echo Downloading binaries...
+wget --no-cache https://github.com/SocialSend/SocialSend/releases/download/v1.0.0.5-Ubuntu-14.04/Send-v1.0.0.5-Linux-Ubuntu14.04.7z
+
+echo Downloading scripts...
+sudo rm -f /etc/init.d/send.$nodename
+rm -f send.init.d
+sudo update-rc.d send.$nodename remove
+wget --no-cache https://raw.githubusercontent.com/nodedaddy/send-masternode-init.d/master/send.init.d
+sudo bash -c "sed \"s/nodenameplaceholder/$nodename/\" send.init.d > /etc/init.d/send.$nodename"
+sudo chmod +x /etc/init.d/send.$nodename
+rm -f send.init.d
+
+echo Installing binaries to /opt/send...
+7z x -y Send-v1.0.0.5-Linux-Ubuntu14.04.7z
+rm -f Send-v1.0.0.5-Linux-Ubuntu14.04.7z
+chmod +x sendd
+chmod +x send-cli
+
+echo "Creating symlink at /usr/sbin/"
+sudo ln -s /opt/send/sendd /usr/sbin/sendd > /dev/null 2>&1
+sudo ln -s /opt/send/send-cli /usr/sbin/send-cli > /dev/null 2>&1
+
+#install service
+echo Installing service...
+sudo update-rc.d send.$nodename defaults
+echo
+
+echo Installation completed successfully!
+echo The masternode will start automatically whenever the operating system boots up
+echo
+echo "**Installation Directories**"
+echo Send binaries: /opt/send
+echo Send configs for this node: /etc/send/$nodename
+echo
+echo "**QUICK START**"
+echo Start masternode:
+echo -e "\e[3msudo service send.$nodename start\e[0m"
+echo
+echo Stop masternode:
+echo -e "\e[3msudo service send.$nodename stop\e[0m"
+echo
+echo Get masternode status and info:
+echo -e "\e[3msudo service send.$nodename status\e[0m"
+echo
+echo Get wallet status and info:
+echo -e "\e[3msudo service send.$nodename walletinfo\e[0m"
+echo
+echo Get blockchain status and info:
+echo -e "\e[3msudo service send.$nodename chaininfo\e[0m"
+echo
+echo Get network status and info:
+echo -e "\e[3msudo service send.$nodename networkinfo\e[0m"
+echo " "
+echo " "
+echo Press any key to start the masternode...
+read startnodekey
+
+sudo service send.$nodename start
+RETVAL="$?"
+sudo service send.$nodename status
+
+exit $RETVAL
