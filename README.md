@@ -1,9 +1,13 @@
 # send-masternode-installer
+
+This installer will take all of the confusion out of setting up a SocialSend masternode.
+Just run the installer using one of the three methods described below, and the installer will gather all of the information it needs from you before handling the download, configuration, and installation of the SocialSend wallet setup as a masternode.
+
 If you copy this software please keep the original author information in the headers
 
 THIS IS BETA SOFTWARE
 WARNING: Use at your own risk!
-I make no guarantees, implied or explicit, about the quality or safety of this software!
+ABSOLUTELY NO WARRANTY of any kind, expressed or implied. 
 Software can delete your data or damage your computer!
 BE CAREFUL
 
@@ -32,3 +36,42 @@ You can control the masternode with these commands
 - sudo service send.instance walletinfo
 - sudo service send.instance chaininfo
 - sudo service send.instance networkinfo
+
+When you run the installer, you will see something like this...
+
+Running the installer...
+
+
+SocialSend 1.0.0.5 Master Node Installer 0.0.1
+This will install the SocialSend wallet and configure it to run as a masternode.
+
+Be sure this is the setup you want before you continue:
+- Masternode running on this Linux computer (Needs to be online to keep the masternode active)
+- Send wallet running on a seperate Windows computer (Does not need to stay online after activating the masternode. This is where your rewards will be sent.)
+
+Press any key if you are sure this is the setup you want...
+(You can exit this installer at any time by pressing ctrl+c)
+
+What is the name of this masternode (no spaces or special characters) [default: mn1]?
+<Your answer here>
+
+Masternode name will be "mn1"
+
+Before you continue, you need to do a few things on your Windows wallet.
+Follow these steps:
+1) Open the SocialSend wallet on your Windows computer
+
+2) In the wallet interface, go to "Tools > Debug console"
+
+3) In the debug console, run the following command and remember the wallet id it shows you:
+   getnewaddress "mn1"
+
+4) In the debug console, run the following command and remember the transaction id and numeric index it shows you:
+   sendfrom "ACCOUNT_YOU_HAVE_UNLOCKED_COINS_AVAILABLE" "ADDRESS_YOU_GOT_ON_PREVIOUS_LINE"
+
+5) In the debug console, run the following command and remember the private key it shows you:
+   createmasternodekey
+
+6) Close the debug console
+
+Once you have completed those steps, you can press any key to continue...
