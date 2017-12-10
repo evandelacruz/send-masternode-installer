@@ -1,5 +1,10 @@
+
 #!/bin/bash
-#can be reached at https://goo.gl/BrjeQk
+#by Evan de la Cruz
+#for nodedaddy
+#2017-12-09
+#this script can be reached at https://goo.gl/BrjeQk
+
 trustystring="trusty"
 xenialstring="xenial"
 
