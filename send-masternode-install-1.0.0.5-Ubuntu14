@@ -1,9 +1,4 @@
 #!/bin/bash
-# Author: Evan de la Cruz
-# Author: adaylateandadollarshort
-# for nodedaddy
-#2017-12-09
-
 echo
 echo SocialSend 1.0.0.5 Master Node Installer 0.0.1
 echo This will install the SocialSend wallet and configure it to run as a masternode.
@@ -108,7 +103,7 @@ echo Using local ip address: $ipaddy
 echo Using public ip address: $externalip
 echo 
 
-if "$externalip" != "$ipaddy"; then
+if test "$externalip" != "$ipaddy"; then
    echo "ALERT: The network interface is behind a router and/or you are using network address translation"
    echo "This is not an error."
    echo "But it will require an extra step to setup your masternode using this interface."
@@ -116,7 +111,7 @@ if "$externalip" != "$ipaddy"; then
    echo "This is done differently on every router, but usually involves going to http\:\/\/192\.168\.1\.1 in your web browser and editing the section called \"port forwarding\" (sometimes found under \"advanced\" or \"gaming\")."
    echo
    echo "Press any key to continue"
-   input confirminput
+   read confirminput
 fi
 
 echo "Ready to install dependency packages (7zip, libboost, bitcoin ppa, libdb4.8, libminiupnpc)"
