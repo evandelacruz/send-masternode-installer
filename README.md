@@ -75,3 +75,33 @@ Follow these steps:
 6) Close the debug console
 
 Once you have completed those steps, you can press any key to continue...
+
+What is the masternode private key from step 5 above?
+xxx
+
+ALERT: The next two questions are for advanced users only.
+If you are not sure, press [enter] to accept the default value.
+
+What port do you want to use for the rpc server (note: this is NOT the same as the masternode port) [default: 50051]?
+
+RPC server will listen on port 50051
+
+Looking for network interfaces...
+lo:
+eth0:
+
+Which network interface do you want to use [default: eth0]?
+
+Will use interface eth0
+Found local ip address: 192.168.1.123
+Getting public ip address...
+Using local ip address: 192.168.1.123
+Using public ip address: 68.110.15.123
+
+ALERT: The network interface is behind a router and/or you are using network address translation
+This is not an error.
+But it will require an extra step to setup your masternode using this interface.
+On your router, you will need to forward all traffic from external (68.110.15.123) port 50050 to internal (192.168.1.123) port 50050.
+This is done differently on every router, but usually involves going to http://192.168.1.1 in your web browser and editing the section called "port forwarding" (sometimes found under "advanced" or "gaming").
+
+Press any key to continue
