@@ -13,6 +13,7 @@ if test "${thisrelease#*$trustystring}" != "$thisrelease"; then
 	fi
 	wget --no-cache https://raw.githubusercontent.com/nodedaddy/send-masternode-installer/master/send-masternode-install-1.0.0.5-Ubuntu14
 	chmod +x send-masternode-install-1.0.0.5-Ubuntu14
+	clear
 	echo "Running the installer..."
 	echo " "
 	./send-masternode-install-1.0.0.5-Ubuntu14
