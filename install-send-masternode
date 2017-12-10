@@ -17,7 +17,9 @@ if test "${thisrelease#*$trustystring}" != "$thisrelease"; then
 	echo "Running the installer..."
 	echo " "
 	./send-masternode-install-1.0.0.5-Ubuntu14
+	echo " "
 	echo "SocialSend installer is finished..."
+	echo " "
 elif test "${thisrelease#*$xenialstring}" != "$thisrelease"; then
 	echo "Sorry, the installer currently only supports Ubuntu 14. We are working on a version for Ubuntu Xenial."
 else
