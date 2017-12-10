@@ -96,7 +96,7 @@ Will use interface eth0
 Found local ip address: 192.168.1.123
 Getting public ip address...
 Using local ip address: 192.168.1.123
-Using public ip address: 68.110.15.123
+Using public ip address: xxx
 
 ALERT: The network interface is behind a router and/or you are using network address translation
 This is not an error.
