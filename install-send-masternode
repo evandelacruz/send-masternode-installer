@@ -2,11 +2,15 @@
 #can be reached at https://goo.gl/BrjeQk
 trustystring="trusty"
 xenialstring="xenial"
+
 echo "Checking your Linux version..."
 thisrelease=$(lsb_release -a)
 if test "${thisrelease#*$trustystring}" != "$thisrelease"; then
 
 	echo "Downloading Trusty installer..."
+	if [ -f send-masternode-install-1.0.0.5-Ubuntu14 ]; then
+		rm -f send-masternode-install-1.0.0.5-Ubuntu14
+	fi
 	wget --no-cache https://raw.githubusercontent.com/nodedaddy/send-masternode-installer/master/send-masternode-install-1.0.0.5-Ubuntu14
 	chmod +x send-masternode-install-1.0.0.5-Ubuntu14
 	echo "Running the installer..."
