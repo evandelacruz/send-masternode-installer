@@ -84,16 +84,19 @@ do_start()
 	do
 		echo -n "."
 		sleep 1
+		getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
 	done
 	while test "${getbalancetest#*$waitstatus2}" != "$getbalancetest"
 	do
 		echo -n "-"
 		sleep 1
+		getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
 	done
 	while test "${getbalancetest#*$waitstatus3}" != "$getbalancetest"
 	do
 		echo -n "+"
 		sleep 1
+		getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
 	done
 	echo
 	sleep 1
