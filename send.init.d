@@ -129,7 +129,8 @@ do_stop()
         # If the above conditions are not satisfied then add some other code
         # that waits for the process to drop all resources that could be
         # needed by services started subsequently.  A last resort is to
-        # sleep for some time.
+
+# sleep for some time.
         start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
         [ "$?" = 2 ] && return 2
         # Many daemons don't delete their pidfiles when they exit.
@@ -168,6 +169,7 @@ do_showaddresses() {
 # Function to check the masternode
 #
 do_checkmasternode() {
+	$CLIENT -conf="$SENDCONF" getinfo
 	$CLIENT -conf="$SENDCONF" masternodedebug
 }
 
