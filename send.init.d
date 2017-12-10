@@ -45,42 +45,43 @@ WALLETFILE=$CONFFOLDER/wallet.dat
 #
 do_start()
 {
-		echo Please enter your wallet passphrase to start the masternode...
-		echo "(new installations need to enter a new passphrase)"
-		read passphrase
-		
-		#check if this is the first time running, which means the wallet will be fresh and unencrypted
-		if [ -f "$WALLETFILE" ]; then
-    		firstrun=0
-		else
-			firstrun=1
-  		fi		
-		
-        # Return
-        #   0 if daemon has been started
-        #   1 if daemon was already running
-        #   2 if daemon could not be started
-        start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
-                || return 1
-        start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- \
-                $DAEMON_ARGS \
-                || return 2
-				
-        # Add code here, if necessary, that waits for the process to be ready
-        # to handle requests from services started subsequently which depend
-        # on this one.  As a last resort, sleep for some time.
-		$CLIENT -conf="$SENDCONF" addnode 69.64.67.58:50050 add
-		$CLIENT -conf="$SENDCONF" addnode 142.44.246.3:50050 add
-		$CLIENT -conf="$SENDCONF" addnode 45.76.116.122:50050 add
-		$CLIENT -conf="$SENDCONF" addnode 69.64.67.226:50050 add
-		
-		if $firstrun == 1; then
-			$CLIENT -conf="$SENDCONF" backupwallet "$CONFFOLDER/newwallet-noencryption.dat.bak"			
-			$CLIENT -conf="$SENDCONF" encryptwallet "$passphrase"
-		fi
-		
-		#wallet needs tobe unlocked for masternode
-		$CLIENT -conf="$SENDCONF" walletpassphrase 999999999 "$passphrase"
+	echo "Please enter your wallet passphrase to start the masternode..."
+	echo "(new installations need to enter a new passphrase)"
+	read encryptpassphrase
+	
+	#check if this is the first time running, which means the wallet will be fresh and unencrypted
+	echo "wallet is $WALLETFILE"
+	if -f $WALLETFILE; then
+		firstrun=0
+	else
+		firstrun=1
+	fi	
+	
+	# Return
+	#   0 if daemon has been started
+	#   1 if daemon was already running
+	#   2 if daemon could not be started
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
+			|| return 1
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- \
+			$DAEMON_ARGS \
+			|| return 2
+			
+	# Add code here, if necessary, that waits for the process to be ready
+	# to handle requests from services started subsequently which depend
+	# on this one.  As a last resort, sleep for some time.
+	$CLIENT -conf="$SENDCONF" addnode 69.64.67.58:50050 add
+	$CLIENT -conf="$SENDCONF" addnode 142.44.246.3:50050 add
+	$CLIENT -conf="$SENDCONF" addnode 45.76.116.122:50050 add
+	$CLIENT -conf="$SENDCONF" addnode 69.64.67.226:50050 add
+	
+	if $firstrun == 1; then
+		$CLIENT -conf="$SENDCONF" backupwallet "$CONFFOLDER/newwallet-noencryption.dat.bak"			
+		$CLIENT -conf="$SENDCONF" encryptwallet "$encryptpassphrase"
+	fi
+	
+	#wallet needs tobe unlocked for masternode
+	$CLIENT -conf="$SENDCONF" walletpassphrase 999999999 "$encryptpassphrase"
 }
 
 #
