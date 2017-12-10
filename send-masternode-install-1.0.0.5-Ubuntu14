@@ -1,4 +1,8 @@
 #!/bin/bash
+#by Evan de la Cruz
+#for nodedaddy
+#2017-12-09
+
 echo
 echo SocialSend 1.0.0.5 Master Node Installer 0.0.1
 echo This will install the SocialSend wallet and configure it to run as a masternode.
