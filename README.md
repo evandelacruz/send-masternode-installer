@@ -1,4 +1,13 @@
 # send-masternode-installer
+# by Evan de la Cruz
+# for nodedaddy
+
+WARNING: Use at your own risk!
+I make no guarantees, implied or explicit, about the quality or safety of this software!
+Software can delete your data or damage your computer!
+BE CAREFUL
+
+If you copy this software please keep the original author information in the headers
 
 Install a SocialSend masternode on your Linux box using one line of code:
 - bash -c "$(wget -O - https://goo.gl/BrjeQk)"
