@@ -51,7 +51,7 @@ do_start()
 	
 	#check if this is the first time running, which means the wallet will be fresh and unencrypted
 	echo "wallet is $WALLETFILE"
-	if -f $WALLETFILE; then
+	if [ -f $WALLETFILE ]; then
 		firstrun=0
 	else
 		firstrun=1
@@ -75,13 +75,36 @@ do_start()
 	$CLIENT -conf="$SENDCONF" addnode 45.76.116.122:50050 add
 	$CLIENT -conf="$SENDCONF" addnode 69.64.67.226:50050 add
 	
-	if $firstrun == 1; then
-		$CLIENT -conf="$SENDCONF" backupwallet "$CONFFOLDER/newwallet-noencryption.dat.bak"			
+	echo -n "waiting a while to verify the wallet and load the index before continuing..."		
+	getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
+	waitstatus1="Verifying wallet"
+	waitstatus2="Loading block index"
+	waitstatus3="Verifying blocks"
+	while test "${getbalancetest#*$waitstatus1}" != "$getbalancetest"
+	do
+		echo -n "."
+		sleep 1
+	done
+	while test "${getbalancetest#*$waitstatus2}" != "$getbalancetest"
+	do
+		echo -n "-"
+		sleep 1
+	done
+	while test "${getbalancetest#*$waitstatus3}" != "$getbalancetest"
+	do
+		echo -n "+"
+		sleep 1
+	done
+	echo
+	sleep 1
+	
+	if [ $firstrun = 1 ]; then
+		$CLIENT -conf="$SENDCONF" backupwallet "$CONFFOLDER/newwallet-noencryption.dat.bak"
 		$CLIENT -conf="$SENDCONF" encryptwallet "$encryptpassphrase"
 	fi
 	
 	#wallet needs tobe unlocked for masternode
-	$CLIENT -conf="$SENDCONF" walletpassphrase 999999999 "$encryptpassphrase"
+	$CLIENT -conf="$SENDCONF" walletpassphrase "$encryptpassphrase" 999999999
 }
 
 #
