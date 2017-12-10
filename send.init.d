@@ -10,7 +10,9 @@
 #
 ### END INIT INFO
 
-# Author: nodedaddy
+# Author: Evan de la Cruz
+# Author: adaylateandadollarshort
+# for nodedaddy
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
