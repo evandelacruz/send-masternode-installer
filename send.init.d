@@ -319,31 +319,31 @@ case "$1" in
         echo "Examples:" >&2
         echo " " >&2
 		echo "Start the masternode:"
-        echo "sudo service send.$NAME start" >&2
+        echo "sudo service send.$NODENAME start" >&2
         echo " " >&2
 		echo "Stop the masternode:"
-        echo "sudo service send.$NAME stop" >&2
+        echo "sudo service send.$NODENAME stop" >&2
         echo " " >&2
 		echo "Get masternode status and info:"
-        echo "sudo service send.$NAME status" >&2
+        echo "sudo service send.$NODENAME status" >&2
         echo " " >&2
 		echo "Get information about the wallet:"
-        echo "sudo service send.$NAME walletinfo" >&2
+        echo "sudo service send.$NODENAME walletinfo" >&2
         echo " " >&2
 		echo "List wallet ids:"
-        echo "sudo service send.$NAME addressinfo" >&2
+        echo "sudo service send.$NODENAME addressinfo" >&2
         echo " " >&2
 		echo "Get information about the blockchain:"
-        echo "sudo service send.$NAME chaininfo" >&2
+        echo "sudo service send.$NODENAME chaininfo" >&2
         echo " " >&2
 		echo "Get information about the network:"
-        echo "sudo service send.$NAME networkinfo" >&2
+        echo "sudo service send.$NODENAME networkinfo" >&2
         echo " " >&2
 		echo "Get a new wallet address:"
-        echo "sudo service send.$NAME newaddress" >&2
+        echo "sudo service send.$NODENAME newaddress" >&2
         echo " " >&2
 		echo "Back up the wallet file:"
-        echo "sudo service send.$NAME backupwallet ~/mywalletbackup.dat" >&2
+        echo "sudo service send.$NODENAME backupwallet ~/mywalletbackup.dat" >&2
         echo " " >&2
         exit 3
         ;;
