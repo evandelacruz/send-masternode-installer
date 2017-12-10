@@ -244,4 +244,9 @@ echo -e "\e[3msend-cli -conf=/etc/send/$nodename/send.conf your_command_here\e[0
 echo " "
 echo "Check the masternode status any time by typing:"
 echo -e "\e[3msudo service send.$nodename status\e[0m"
+
+echo " "
+echo "SocialSend installer is finished"
+echo " "
+
 exit $RETVAL
