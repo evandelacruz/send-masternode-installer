@@ -108,7 +108,7 @@ if test "$externalip" != "$ipaddy"; then
    echo "This is not an error."
    echo "But it will require an extra step to setup your masternode using this interface."
    echo "On your router, you will need to forward all traffic from external ($externalip) port 50050 to internal ($ipaddy) port 50050."
-   echo "This is done differently on every router, but usually involves going to http\:\/\/192\.168\.1\.1 in your web browser and editing the section called \"port forwarding\" (sometimes found under \"advanced\" or \"gaming\")."
+   echo "This is done differently on every router, but usually involves going to http://192.168.1.1 in your web browser and editing the section called \"port forwarding\" (sometimes found under \"advanced\" or \"gaming\")."
    echo
    echo "Press any key to continue"
    read confirminput
