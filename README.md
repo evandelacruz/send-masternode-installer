@@ -7,7 +7,7 @@ BE CAREFUL
 
 If you copy this software please keep the original author information in the headers
 
-Install a SocialSend masternode on your Linux box using one line of code:
+Install a SocialSend masternode on your Linux box using a single command:
 - bash -c "$(wget -O - https://goo.gl/BrjeQk)"
 
 Or, if you don't want to use the goo.gl shortened url, you can use the full url:
