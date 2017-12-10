@@ -72,9 +72,9 @@ do_start()
 	# on this one.  As a last resort, sleep for some time.	
 	echo -n "waiting a while to verify the wallet and load the index before continuing..."		
 	getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
-	waitstatus1="Verifying wallet"
+	waitstatus1="Verifying"
 	waitstatus2="Loading block index"
-	waitstatus3="Verifying blocks"
+	waitstatus3="Verifying"
 	while test "${getbalancetest#*$waitstatus1}" != "$getbalancetest"
 	do
 		echo -n "."
@@ -129,8 +129,7 @@ do_stop()
         # If the above conditions are not satisfied then add some other code
         # that waits for the process to drop all resources that could be
         # needed by services started subsequently.  A last resort is to
-
-# sleep for some time.
+        # sleep for some time.
         start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
         [ "$?" = 2 ] && return 2
         # Many daemons don't delete their pidfiles when they exit.
