@@ -44,11 +44,7 @@ WALLETFILE=$CONFFOLDER/wallet.dat
 # Function that starts the daemon/service
 #
 do_start()
-{
-	echo "Please enter your wallet passphrase to start the masternode..."
-	echo "(new installations need to enter a new passphrase)"
-	read encryptpassphrase
-	
+{	
 	#check if this is the first time running, which means the wallet will be fresh and unencrypted
 	echo "wallet is $WALLETFILE"
 	if [ -f $WALLETFILE ]; then
@@ -72,9 +68,11 @@ do_start()
 	# on this one.  As a last resort, sleep for some time.	
 	echo -n "waiting a while to verify the wallet and load the index before continuing..."		
 	getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
-	waitstatus1="Verifying"
-	waitstatus2="Loading block index"
-	waitstatus3="Verifying"
+	waitstatus1="connect to server"
+	waitstatus2="Verifying"
+	waitstatus3="Loading"
+	waitstatus4="Verifying"
+	waitstatus5="Loading"
 	while test "${getbalancetest#*$waitstatus1}" != "$getbalancetest"
 	do
 		echo -n "."
@@ -93,22 +91,58 @@ do_start()
 		sleep 1
 		getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
 	done
+	while test "${getbalancetest#*$waitstatus4}" != "$getbalancetest"
+	do
+		echo -n "o"
+		sleep 1
+		getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
+	done
+	while test "${getbalancetest#*$waitstatus5}" != "$getbalancetest"
+	do
+		echo -n "o"
+		sleep 1
+		getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
+	done
 	echo
 	sleep 1
 	
 	if [ $firstrun = 1 ]; then
 		$CLIENT -conf="$SENDCONF" backupwallet "$CONFFOLDER/newwallet-noencryption.dat.bak"
-		$CLIENT -conf="$SENDCONF" encryptwallet "$encryptpassphrase"
+		sleep 1
+		goodstatus="encrypted"
+		echo "Please enter a new passphrase for the masternode wallet..."
+		read encryptpassphrase
+		encryptresult=$($CLIENT -conf="$SENDCONF" encryptwallet "$encryptpassphrase")
+		if test "${encryptresult#*$goodstatus}" != "$encryptresult"; then
+		    echo " "
+			echo "Wallet has been encrypted. Restarting daemon...";
+			sleep 10
+			deadstatus="response"
+			isdeadtest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
+			while test "${isdeadtest#*$deadstatus}" != "$isdeadtest"
+			do
+				echo -n "."
+				sleep 1
+				isdeadtest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
+			done
+			do_start			
+		else
+			echo "There was an error encrypting the wallet";
+		fi
+    else
+		#wallet needs tobe unlocked for masternode
+		echo " "
+		echo "Please enter your wallet passphrase to start the masternode..."
+		read encryptpassphrase
+		
+		$CLIENT -conf="$SENDCONF" walletpassphrase "$encryptpassphrase" 999999999
+		
+		echo "adding default nodes..."
+		$CLIENT -conf="$SENDCONF" addnode 69.64.67.58:50050 add 2>&1
+		$CLIENT -conf="$SENDCONF" addnode 142.44.246.3:50050 add 2>&1
+		$CLIENT -conf="$SENDCONF" addnode 45.76.116.122:50050 add 2>&1
+		$CLIENT -conf="$SENDCONF" addnode 69.64.67.226:50050 add 2>&1	
 	fi
-	
-	#wallet needs tobe unlocked for masternode
-	$CLIENT -conf="$SENDCONF" walletpassphrase "$encryptpassphrase" 999999999
-	
-	echo "adding default nodes..."
-	$CLIENT -conf="$SENDCONF" addnode 69.64.67.58:50050 add 2>&1
-	$CLIENT -conf="$SENDCONF" addnode 142.44.246.3:50050 add 2>&1
-	$CLIENT -conf="$SENDCONF" addnode 45.76.116.122:50050 add 2>&1
-	$CLIENT -conf="$SENDCONF" addnode 69.64.67.226:50050 add 2>&1	
 }
 
 #
@@ -169,7 +203,7 @@ do_showaddresses() {
 #
 do_checkmasternode() {
 	$CLIENT -conf="$SENDCONF" getinfo
-	$CLIENT -conf="$SENDCONF" masternodedebug
+	$CLIENT -conf="$SENDCONF" getwalletinfo
 }
 
 do_checknetwork() {
