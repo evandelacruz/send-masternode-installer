@@ -1,4 +1,3 @@
-
 # send-masternode-installer
 If you copy this software please keep the original author information in the headers
 
@@ -22,3 +21,14 @@ Or, if you prefer to download the installer manually, use these steps:
 - wget https://raw.githubusercontent.com/nodedaddy/send-masternode-installer/master/install-send-masternode
 - chmod +x install-send-masternode
 - ./install-send-masternode
+
+After the installer is completed, the SocialSend masternode will be installed a service named send.instance (where "instance" is a name you provide)
+
+You can control the masternode with these commands
+- sudo service send.instance start
+- sudo service send.instance stop
+- sudo service send.instance restart
+- sudo service send.instance status
+- sudo service send.instance walletinfo
+- sudo service send.instance chaininfo
+- sudo service send.instance networkinfo
