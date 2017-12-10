@@ -101,7 +101,7 @@ Using public ip address: xxx
 ALERT: The network interface is behind a router and/or you are using network address translation
 This is not an error.
 But it will require an extra step to setup your masternode using this interface.
-On your router, you will need to forward all traffic from external (68.110.15.123) port 50050 to internal (192.168.1.123) port 50050.
+On your router, you will need to forward all traffic from external (xxx) port 50050 to internal (192.168.1.123) port 50050.
 This is done differently on every router, but usually involves going to http://192.168.1.1 in your web browser and editing the section called "port forwarding" (sometimes found under "advanced" or "gaming").
 
 Press any key to continue
