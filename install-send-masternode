@@ -2,6 +2,7 @@
 #can be reached at https://goo.gl/BrjeQk
 trustystring="trusty"
 xenialstring="xenial"
+echo "Checking your Linux version..."
 thisrelease=$(lsb_release -a)
 if test "${thisrelease#*$trustystring}" != "$thisrelease"; then
 
