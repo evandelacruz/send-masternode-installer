@@ -207,6 +207,7 @@ do_showaddresses() {
 do_checkmasternode() {
 	$CLIENT -conf="$SENDCONF" getinfo
 	$CLIENT -conf="$SENDCONF" getwalletinfo
+	$CLIENT -conf="$SENDCONF" getmasternodestatus
 }
 
 do_checknetwork() {
