@@ -156,7 +156,7 @@ sudo chown $currentUser:root /etc/send/$nodename
 
 #create configs
 echo Creating configs in /etc/send/$nodename
-rm /etc/send/$nodename/send.conf
+rm -f /etc/send/$nodename/send.conf
 echo rpcuser=$nodename-user>>/etc/send/$nodename/send.conf
 echo rpcpassword=$(uuidgen)>>/etc/send/$nodename/send.conf
 echo daemon=1>>/etc/send/$nodename/send.conf
@@ -170,7 +170,7 @@ echo masternodeprivkey=$privkey>>/etc/send/$nodename/send.conf
 
 #stop daemon if already running
 if [ -f "/etc/init.d/send.$nodename" ]; then
-	echo "Stopping existing service instance if it exists..."
+	echo "Stopping existing service instance if it exists (this can take a while)..."
 	sudo service send.$nodename stop > /dev/null 2>&1
 elif [ -f /opt/send/send-cli ]; then
 	echo "Stopping existing daemon instance if it exists..."
@@ -185,7 +185,7 @@ echo Downloading scripts...
 sudo rm -f /etc/init.d/send.$nodename
 rm -f send.init.d
 sudo update-rc.d send.$nodename remove
-wget --no-cache https://raw.githubusercontent.com/nodedaddy/send-masternode-init.d/master/send.init.d
+wget --no-cache https://raw.githubusercontent.com/nodedaddy/send-masternode-installer/master/send.init.d
 sudo bash -c "sed \"s/nodenameplaceholder/$nodename/\" send.init.d > /etc/init.d/send.$nodename"
 sudo chmod +x /etc/init.d/send.$nodename
 rm -f send.init.d
@@ -238,5 +238,10 @@ read startnodekey
 sudo service send.$nodename start
 RETVAL="$?"
 sudo service send.$nodename status
-
+echo " "
+echo "If you want to use send-cli directly, be sure to specify the correct conf argument, like this:"
+echo -e "\e[3msend-cli -conf=/etc/send/$nodename/send.conf your_command_here\e[0m"
+echo " "
+echo "Check the masternode status any time by typing:"
+echo -e "\e[3msudo service send.$nodename status\e[0m"
 exit $RETVAL
