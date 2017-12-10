@@ -50,7 +50,7 @@ do_start()
 		read passphrase
 		
 		#check if this is the first time running, which means the wallet will be fresh and unencrypted
-		if [ -f "$WALLETFILE" ] ; then
+		if [ -f "$WALLETFILE" ]; then
     		firstrun=0
 		else
 			firstrun=1
