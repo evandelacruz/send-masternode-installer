@@ -1,6 +1,4 @@
 # send-masternode-installer
-# by Evan de la Cruz
-# for nodedaddy
 
 WARNING: Use at your own risk!
 I make no guarantees, implied or explicit, about the quality or safety of this software!
