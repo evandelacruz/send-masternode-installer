@@ -105,8 +105,9 @@ do_start()
 		sleep 1
 		getbalancetest=$($CLIENT -conf="$SENDCONF" getbalance 2>&1)
 	done
-	echo
 	sleep 1
+	echo "done"
+	echo
 	
 	if [ $firstrun = 1 ]; then
 		$CLIENT -conf="$SENDCONF" backupwallet "$CONFFOLDER/newwallet-noencryption.dat.bak"
